@@ -1,33 +1,34 @@
-import java.util.Comparator;
-import java.util.NoSuchElementException;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class AssociativeArraySymbolTable<TKey extends Comparable<TKey>, TValue>
 {
-    private class Pair
+    private static class Pair<TKey, TValue>
     {
         public TKey Key;
         public TValue Value;
+
+        @Override
+        public String toString()
+        {
+            return String.format("{%s, %s}", Key, Value);
+        }
     }
 
-    Pair[] pairs;
+    Pair<TKey, TValue>[] pairs;
     int emptyIndex;
 
     public AssociativeArraySymbolTable()
     {
-        pairs = (Pair[])new Object[8];
-        emptyIndex = 0;
-    }
-
-    public AssociativeArraySymbolTable(int initialSize)
-    {
-        pairs = (Pair[])new Object[initialSize];
+        pairs = (Pair<TKey, TValue>[])new Pair[8];
         emptyIndex = 0;
     }
 
     // resizes to the specified size
     private void resize(int newSize)
     {
-        Pair[] newPairs = (Pair[])new Object[newSize];
+        Pair<TKey, TValue>[] newPairs = (Pair<TKey, TValue>[])new Pair[newSize];
 
         System.arraycopy(pairs, 0, newPairs, 0, pairs.length);
 
@@ -77,7 +78,7 @@ public class AssociativeArraySymbolTable<TKey extends Comparable<TKey>, TValue>
         emptyIndex++;
 
         // in case array starts to fill up, resize so more space is available
-        if (emptyIndex > pairs.length)
+        if (emptyIndex > pairs.length / 2)
         {
             resize(pairs.length * 2);
         }
@@ -86,6 +87,12 @@ public class AssociativeArraySymbolTable<TKey extends Comparable<TKey>, TValue>
     // returns the index of the key value pair, or -1 if no such key exists
     public int findIndex(TKey key)
     {
+        // if empty there are no keys
+        if (emptyIndex <= 0)
+        {
+            return -1;
+        }
+
         // binary search
 
         // left is the left wall of the partition and likewise for right
@@ -99,25 +106,25 @@ public class AssociativeArraySymbolTable<TKey extends Comparable<TKey>, TValue>
         int compare = key.compareTo(pairs[middle].Key);
 
         // find the index of the element with the given key
-        while (compare != 0)
+        // if left somehow becomes bigger than right, no such key exists
+        while (left <= right)
         {
-            // if left somehow becomes bigger than right, no such key exists
-            if (left > right)
+            // index has been found, return the index of it
+            if (compare == 0)
             {
-                return -1;
+                return middle;
             }
-
             // compare < 0 means that key < middle key, which means that
             // the pair searched for is in the lower half of the partition
-            if (compare < 0)
+            else if (compare < 0)
             {
-                right = middle;
+                right = middle - 1;
             }
             // opposite case; pair searched for is in the upper half of the
             // partition
             else // compare > 0
             {
-                left = middle;
+                left = middle + 1;
             }
 
             // find the new middle of the partition and compare the next elements
@@ -125,8 +132,8 @@ public class AssociativeArraySymbolTable<TKey extends Comparable<TKey>, TValue>
             compare = key.compareTo(pairs[middle].Key);
         }
 
-        // index has been found, return the index of it
-        return middle;
+        // no such key existed
+        return -1;
     }
 
     // returns the value associated with that key
@@ -153,8 +160,43 @@ public class AssociativeArraySymbolTable<TKey extends Comparable<TKey>, TValue>
         return findIndex(key) >= 0;
     }
 
-    public static void main(String[] args)
+    // returns the string representation of the object
+    @Override
+    public String toString()
     {
+        return Arrays.toString(Arrays.copyOf(pairs, emptyIndex));
+    }
 
+    // test method
+    public static void main(String[] args) throws IOException
+    {
+        // take the number of inputs from the user in the form of
+        // "{string} {integer}", split them by whitespace and add them to
+        // the symbol table as key and value, respectively.
+        // lastly, print out the table
+        AssociativeArraySymbolTable<String, Integer> st =
+                new AssociativeArraySymbolTable<>();
+
+        Scanner in = new Scanner(System.in);
+        System.out.print("Number of inputs: ");
+
+        int amount = in.nextInt();
+        // the '\n' character is not cleared from the buffer by nextInt(),
+        // this clears it
+        in.nextLine();
+        
+        System.out.println("Inputs:");
+        for (int count = 0; count < amount; count++)
+        {
+            String line = in.nextLine();
+            String[] values = line.split("\\s+");
+
+            int integer = Integer.parseInt(values[1]);
+            String str = values[0];
+
+            st.put(str, integer);
+        }
+
+        System.out.println(st);
     }
 }

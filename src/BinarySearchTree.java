@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class BinarySearchTree<TKey extends Comparable<TKey>, TValue>
 {
     private class Node
@@ -6,6 +8,22 @@ public class BinarySearchTree<TKey extends Comparable<TKey>, TValue>
         public TValue value;
         public Node left;
         public Node right;
+
+        @Override
+        public String toString()
+        {
+            return String.format(
+                    "{%s, %s}"
+                        + (left == null
+                            ? ""
+                            : ", " + left)
+                        + (right == null
+                            ? ""
+                            : ", " + right),
+                    key,
+                    value
+            );
+        }
     }
 
     Node root;
@@ -114,5 +132,48 @@ public class BinarySearchTree<TKey extends Comparable<TKey>, TValue>
         // if traverseFor returns null it means it couldn't find any element
         // associated with the key, which means the pair doesn't exists
         return traverseFor(root, key) != null;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "[" +
+                (root == null
+                        ? ""
+                        : root) +
+                "]";
+    }
+
+    // test methods
+    public static void main(String[] args)
+    {
+        // take the number of inputs from the user in the form of
+        // "{string} {integer}", split them by whitespace and add them to
+        // the symbol table as key and value, respectively.
+        // lastly, print out the table
+        BinarySearchTree<String, Integer> bst =
+                new BinarySearchTree<>();
+
+        Scanner in = new Scanner(System.in);
+        // the '\n' character is not cleared from the buffer by nextInt(),
+        // this clears it
+        System.out.print("Number of inputs: ");
+
+        int amount = in.nextInt();
+        in.nextLine();
+
+        System.out.println("Inputs:");
+        for (int count = 0; count < amount; count++)
+        {
+            String line = in.nextLine();
+            String[] values = line.split("\\s+");
+
+            int integer = Integer.parseInt(values[1]);
+            String str = values[0];
+
+            bst.put(str, integer);
+        }
+
+        System.out.println(bst);
     }
 }

@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -51,63 +52,29 @@ public class STvsBST
     }
 
 
-    private static List<String> getWords(int max, Scanner in)
-    {
-        List<String> words = new ArrayList<String>(max);
 
-        // add all words in scanner or up to `max` words into the word list
-        while (in.hasNextLine() && words.size() < max)
-        {
-            String currentLine = in.nextLine();
 
-            // add all words from the current line into the list of words
-            for (int i = 0; i < currentLine.length() && words.size() < max; i++)
-            {
-                // skip all spaces
-                if (currentLine.charAt(i) == ' ')
-                {
-                    continue;
-                }
+    private static final int TEST_COUNT = 10_000;
 
-                int startIndex = i;
-                // iterate till a space is found or end is found
-                for (; currentLine.charAt(i) != ' '
-                        && i < currentLine.length();
-                     i++);
-
-                // add word to the list of words
-                words.add(currentLine.substring(startIndex, i));
-
-                // i will increment and thus skip the space that was found
-                // in the inner for loop
-            }
-        }
-
-        return words;
-    }
-
-    private static final int TEST_COUNT = 1000;
-
-    private static void testSearches(int n, String fileName) throws FileNotFoundException
+    private static void testSearches(int n) throws FileNotFoundException
     {
         // setting upp a list that will contain all n * 100 words
         int wordCount = n * 100;
 
-        // reading input file
-        File file = new File(fileName);
-        Scanner the_text = new Scanner(file);
+        // read input
+        Scanner the_text = new Scanner(System.in);
 
         // sort out all words
-        List<String> words = getWords(wordCount, the_text);
+        List<String> words = TextUtility.getWords(wordCount, the_text);
 
-        long stMean = 0, bstMean = 0;
+        BigInteger stMean = BigInteger.ZERO, bstMean = BigInteger.ZERO;
         for (int count = 0; count < TEST_COUNT; count++)
         {
-            stMean += stTime(words);
-            bstMean += bstTime(words);
+            stMean = stMean.add(BigInteger.valueOf(stTime(words)));
+            bstMean = bstMean.add(BigInteger.valueOf(bstTime(words)));
         }
-        stMean /= TEST_COUNT;
-        bstMean /= TEST_COUNT;
+        stMean = stMean.divide(BigInteger.valueOf(TEST_COUNT));
+        bstMean = bstMean.divide(BigInteger.valueOf(TEST_COUNT));
 
         System.out.println(
                 String.format(
@@ -126,9 +93,8 @@ public class STvsBST
 
     public static void main(String[] args) throws FileNotFoundException
     {
-        String fileName = args[0];
-        int n = Integer.parseInt(args[1]);
+        int n = Integer.parseInt(args[0]);
 
-        testSearches(n, fileName);
+        testSearches(n);
     }
 }
