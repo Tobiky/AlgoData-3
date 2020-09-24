@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 public class TextUtility
 {
+    private static final int HASHTABLE_SIZE = 1024;
+
     private InputStream text;
 
     public TextUtility(InputStream text)
@@ -112,7 +114,7 @@ public class TextUtility
             Scanner in)
     {
         HashTable<String, List<Long>> indexes =
-                new HashTable<>();
+                new HashTable<>(HASHTABLE_SIZE);
 
         // count is the character index (1-based index)
         for (long count = 1; in.hasNextLine();)

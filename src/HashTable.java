@@ -1,8 +1,10 @@
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class HashTable<TKey, TValue>
+
+public class HashTable<TKey, TValue> implements Iterable<TKey>
 {
     private static class Node<TKey, TValue>
     {
@@ -14,20 +16,18 @@ public class HashTable<TKey, TValue>
         public String toString()
         {
             return String.format(
-                        "\n{%s, %s}",
-                        key,
-                        value) +
-                    (next == null
-                            ? ""
-                            : ", " + next);
+                    "{%s, %s}",
+                    key,
+                    value);
         }
     }
 
     private Node<TKey, TValue>[] bucket;
+    private int size;
 
     public HashTable()
     {
-        bucket = (Node<TKey, TValue>[])new Node[8];
+        bucket = (Node<TKey, TValue>[])new Node[128];
     }
 
     public HashTable(int size)
@@ -35,6 +35,11 @@ public class HashTable<TKey, TValue>
         bucket = (Node<TKey, TValue>[])new Node[size];
     }
 
+
+    public int size()
+    {
+        return size;
+    }
 
     private int hashIndex(TKey key)
     {
@@ -56,6 +61,7 @@ public class HashTable<TKey, TValue>
         if (bucket[hashIndex] == null)
         {
             bucket[hashIndex] = newNode;
+            size++;
         }
         else
         {
@@ -84,6 +90,7 @@ public class HashTable<TKey, TValue>
             else
             {
                 current.next = newNode;
+                size++;
             }
         }
     }
@@ -100,7 +107,12 @@ public class HashTable<TKey, TValue>
         // no element at hash index, so there is no stored key of that value
         if (current == null)
         {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException(
+                    String.format(
+                            "%s{%s}",
+                            getClass().getName(),
+                            key)
+            );
         }
 
         // before equality is checked, hashcode equality is checked
@@ -157,7 +169,30 @@ public class HashTable<TKey, TValue>
     @Override
     public String toString()
     {
-        return Arrays.toString(bucket);
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+
+        Iterator<TKey> iter = iterator();
+
+        while (iter.hasNext())
+        {
+            TKey key = iter.next();
+
+            // change to nodes
+            sb
+                    .append(
+                            String.format(
+                                    "{%s, %s}",
+                                    key,
+                                    get(key))
+                    ).append(", ");
+        }
+
+        // clear the last ", "
+        sb.replace(sb.length() - 2, sb.length(), "");
+
+        sb.append(']');
+        return sb.toString();
     }
 
     // test method
@@ -190,6 +225,59 @@ public class HashTable<TKey, TValue>
             ht.put(str, integer);
         }
 
-        System.out.println(ht);
+        String str = ht.toString();
+        System.out.println(str);
+    }
+
+    @Override
+    public Iterator<TKey> iterator()
+    {
+        return new Iterator<TKey>()
+        {
+            int index = 0;
+            int count = 0;
+            Node<TKey, TValue> currentNode;
+
+            @Override
+            public boolean hasNext()
+            {
+                return index < bucket.length && count < size();
+            }
+
+            @Override
+            public TKey next()
+            {
+                if (!hasNext())
+                {
+                    throw new NoSuchElementException();
+                }
+                else if (currentNode != null)
+                {
+                    Node<TKey, TValue> holder =
+                            currentNode;
+
+                    currentNode =
+                            currentNode.next;
+
+                    count++;
+                    return holder.key;
+                }
+                else if (bucket[index] == null)
+                {
+                    index++;
+                    return next();
+                }
+                else
+                {
+                    Node<TKey, TValue> holder =
+                            bucket[index++];
+
+                    currentNode = holder.next;
+
+                    count++;
+                    return holder.key;
+                }
+            }
+        };
     }
 }
