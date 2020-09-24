@@ -43,7 +43,7 @@ public class HashTable<TKey, TValue> implements Iterable<TKey>
 
     private int hashIndex(TKey key)
     {
-        return Math.abs(key.hashCode() % bucket.length);
+        return (key.hashCode() & 0x7fffffff) % bucket.length;
     }
 
     // adds a key and an associated value to the table
@@ -107,6 +107,8 @@ public class HashTable<TKey, TValue> implements Iterable<TKey>
         // no element at hash index, so there is no stored key of that value
         if (current == null)
         {
+
+
             throw new NoSuchElementException(
                     String.format(
                             "%s{%s}",
@@ -120,8 +122,8 @@ public class HashTable<TKey, TValue> implements Iterable<TKey>
         // and checking two int values is faster than checking the equality
         // of two entire objects
         while (current.next != null
-                && current.key.hashCode() != key.hashCode()
-                && !current.key.equals(key))
+                && !(current.key.hashCode() == key.hashCode()
+                    && current.key.equals(key)))
         {
             current = current.next;
         }
@@ -134,7 +136,12 @@ public class HashTable<TKey, TValue> implements Iterable<TKey>
             return current.value;
         }
 
-        throw new NoSuchElementException();
+        throw new NoSuchElementException(
+                String.format(
+                        "%s{%s}",
+                        getClass().getName(),
+                        key)
+        );
     }
 
     public boolean contains(TKey key)

@@ -2,10 +2,7 @@ import com.sun.javafx.tk.TKClipboard;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class MostCommonWords
 {
@@ -51,10 +48,11 @@ public class MostCommonWords
         return frequencyToWords;
     }
 
-    private static int[] orderFrequencies(
+    private static Integer[] orderFrequencies(
             HashTable<Integer, List<String>> frequenciesToWords)
     {
-        int[] orderedFrequencies = new int[frequenciesToWords.size()];
+        // allocates 3 too many spaces
+        Integer[] orderedFrequencies = new Integer[frequenciesToWords.size() - 3];
 
         int index = 0;
         for (int frequency : frequenciesToWords)
@@ -62,7 +60,7 @@ public class MostCommonWords
             orderedFrequencies[index++] = frequency;
         }
 
-        Arrays.sort(orderedFrequencies);
+        Arrays.sort(orderedFrequencies, Collections.reverseOrder());
 
         return orderedFrequencies;
     }
@@ -86,7 +84,7 @@ public class MostCommonWords
         HashTable<Integer, List<String>> frequencyToWords =
                 mostCommonWords(indices);
 
-        int[] orderedFrequencies =
+        Integer[] orderedFrequencies =
                 orderFrequencies(frequencyToWords);
 
         long time = System.nanoTime() - start;
@@ -114,7 +112,7 @@ public class MostCommonWords
             if (input.contains("+"))
             {
                 String[] values = input.split("\\+");
-                int index  = Integer.parseInt(values[0]);
+                int index  = Integer.parseInt(values[0]) - 1;
                 int length = Integer.parseInt(values[1]);
 
                 if (index < 0 || index >= orderedFrequencies.length)
@@ -147,7 +145,7 @@ public class MostCommonWords
 
                         System.out.printf(
                                 "%d. %s\n",
-                                index + 1,
+                                i - index + 1,
                                 words);
                     }
                 }
@@ -167,12 +165,14 @@ public class MostCommonWords
                             orderedFrequencies[index]);
 
                     System.out.printf(
-                            "The %dth most common words are %s",
+                            "The %dth most common words are %s\n",
                             index + 1,
                             words);
 
                 }
             }
+
+            System.out.println();
         }
     }
 }
