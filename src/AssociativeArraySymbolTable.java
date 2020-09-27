@@ -1,5 +1,17 @@
+/*
+    Author: Andreas Hammarstrand
+    Written: 2020/09/21
+    Updated: 2020/09/27
+    Purpose:
+        AssociativeArraySymbolTable attempts at implementing an associative array,
+        a symbol table, through an ordered array of elements and binary search.
+        This class only implements searching, retrieval, and appending.
+    Usage:
+        Import the class to use the hash table or run the main method
+        to run its tests. The input for the tests must be representation
+        of "String{blank space}Integer".
+ */
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class AssociativeArraySymbolTable<TKey extends Comparable<TKey>, TValue>
@@ -38,7 +50,7 @@ public class AssociativeArraySymbolTable<TKey extends Comparable<TKey>, TValue>
     // adds a key and associated key into the table
     public void put(TKey key, TValue value)
     {
-        Pair p = new Pair();
+        Pair<TKey, TValue> p = new Pair<TKey, TValue>();
         p.Key = key;
         p.Value = value;
 
@@ -184,19 +196,24 @@ public class AssociativeArraySymbolTable<TKey extends Comparable<TKey>, TValue>
         // the '\n' character is not cleared from the buffer by nextInt(),
         // this clears it
         in.nextLine();
-        
+
+        // take in given amount of inputs
         System.out.println("Inputs:");
         for (int count = 0; count < amount; count++)
         {
+            // separate the key and value by blank space
             String line = in.nextLine();
             String[] values = line.split("\\s+");
 
+            // parse values into correct form
             int integer = Integer.parseInt(values[1]);
             String str = values[0];
 
+            // add them to the hashtable
             st.put(str, integer);
         }
 
+        // print out the hash table
         System.out.println(st);
     }
 }

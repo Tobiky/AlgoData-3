@@ -1,3 +1,17 @@
+/*
+    Author: Andreas Hammarstrand
+    Written: 2020/09/21
+    Updated: 2020/09/27
+    Purpose:
+        BinarySearchTree attempts at implementing a binary search tree.
+        This class only implements searching, retrieval, and appending.
+    Usage:
+        Import the class to use the binary search tree or run the main method
+        to run its tests as well as showing the keys of the tree in prefix,
+        infix, and postfix notation. The input for the tests must be representation
+        of "String{blank space}Integer".
+ */
+
 import java.util.Scanner;
 
 public class BinarySearchTree<TKey extends Comparable<TKey>, TValue>
@@ -9,6 +23,7 @@ public class BinarySearchTree<TKey extends Comparable<TKey>, TValue>
         public Node left;
         public Node right;
 
+        // returns the a prefix representation of the node
         @Override
         public String toString()
         {
@@ -134,6 +149,8 @@ public class BinarySearchTree<TKey extends Comparable<TKey>, TValue>
         return traverseFor(root, key) != null;
     }
 
+    // returns a string representation of the object; specifically in prefix
+    // notion.
     @Override
     public String toString()
     {
@@ -142,6 +159,69 @@ public class BinarySearchTree<TKey extends Comparable<TKey>, TValue>
                         ? ""
                         : root) +
                 "]";
+    }
+
+    // returns the prefix representation of the keys of the tree
+    public String prefixRepresentation(Node n)
+    {
+        if (n == null)
+        {
+            return null;
+        }
+
+        String left = prefixRepresentation(n.left);
+        String right = prefixRepresentation(n.right);
+
+        return
+                n.key +
+                (left == null
+                        ? ""
+                        : " " + left) +
+                (right == null
+                        ? ""
+                        : " " + right);
+    }
+
+    // returns the infix representation of the keys of the tree
+    public String infixRepresentation(Node n)
+    {
+        if (n == null)
+        {
+            return null;
+        }
+
+        String left = prefixRepresentation(n.left);
+        String right = prefixRepresentation(n.right);
+
+        return
+                (left == null
+                        ? ""
+                        : " " + left + " "
+                ) + n.key +
+                (right == null
+                        ? ""
+                        : " " + right);
+    }
+
+    // returns the postfix representation of the keys of the tree
+    public String postfixRepresentation(Node n)
+    {
+        if (n == null)
+        {
+            return null;
+        }
+
+        String left = prefixRepresentation(n.left);
+        String right = prefixRepresentation(n.right);
+
+        return
+                (left == null
+                        ? ""
+                        : " " + left) +
+                (right == null
+                        ? ""
+                        : " " + right + " ")
+                + n.key;
     }
 
     // test methods
@@ -160,20 +240,39 @@ public class BinarySearchTree<TKey extends Comparable<TKey>, TValue>
         System.out.print("Number of inputs: ");
 
         int amount = in.nextInt();
+        // the '\n' character is not cleared from the buffer by nextInt(),
+        // this clears it
         in.nextLine();
 
+        // take in given amount of inputs
         System.out.println("Inputs:");
         for (int count = 0; count < amount; count++)
         {
+            // separate the key and value by blank space
             String line = in.nextLine();
             String[] values = line.split("\\s+");
 
+            // parse values into correct form
             int integer = Integer.parseInt(values[1]);
             String str = values[0];
 
+            // add them to the hashtable
             bst.put(str, integer);
         }
 
+        // print out the hash table
         System.out.println(bst);
+
+        // prefix
+        System.out.println("Prefix notation: "
+                + bst.prefixRepresentation(bst.root));
+
+        // infix
+        System.out.println("Infix notation: "
+                + bst.infixRepresentation(bst.root));
+
+        // postfix
+        System.out.println("Postfix notation: "
+                + bst.postfixRepresentation(bst.root));
     }
 }

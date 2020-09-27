@@ -1,5 +1,17 @@
+/*
+    Author: Andreas Hammarstrand
+    Written: 2020/09/23
+    Updated: 2020/09/27
+    Purpose:
+        The purpose of EvenHashDistributions is to show how evenly the
+        inner hash function of String distributes hash values.
+    Usage:
+        Run the main method and pipe in the contents of a file containing
+        only spaces, newline characters, and/or blank spaces.
+        Requires `BinarySearchTree` to work
+ */
+
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 
 public class EvenHashDistributions
