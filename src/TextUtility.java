@@ -1,7 +1,7 @@
 /*
     Author: Andreas Hammarstrand
     Written: 2020/09/18
-    Updated: 2020/09/27
+    Updated: 2020/09/28
     Purpose:
         TextUtility provides utility functions for texts. These functions
         are; filtering a text from non-alphabetical, non-newline, and non-blank
@@ -9,6 +9,7 @@
     Usage:
         The functions inside this class can be used by importing the class
         or text can be filtered by running the main method.
+        Requires `HashTable` to work.
  */
 
 import java.io.IOException;

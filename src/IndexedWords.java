@@ -1,7 +1,7 @@
 /*
     Author: Andreas Hammarstrand
     Written: 2020/09/23
-    Updated: 2020/09/27
+    Updated: 2020/09/28
     Purpose:
         IndexWords indexes all the words in a file and lets the user ask for
         the index of a certain word.
@@ -11,6 +11,7 @@
         newline characters.
         The user may then write a word to find the character indices of, in any
         letter casing.
+        Requires `HashTable` and `TextUtility` to work.
  */
 
 import java.io.File;

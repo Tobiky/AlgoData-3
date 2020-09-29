@@ -1,7 +1,7 @@
 /*
     Author: Andreas Hammarstrand
     Written: 2020/09/23
-    Updated: 2020/09/27
+    Updated: 2020/09/28
     Purpose:
         MostCommonWords takes in a file, indexes the word inside it, process
         that information to let the user ask for which are the k:th most common
@@ -10,7 +10,7 @@
         Run the main method with the file mentioned above as the first
         argument. The file may only contain alphabetical, newline, and/or
         blank characters.
-        Requires `HashTable` to work.
+        Requires `HashTable` and `TextUtility` to work.
  */
 
 import java.io.File;
